@@ -92,4 +92,42 @@ class Base {
 			sqlex.printStackTrace();
 		}
 	}
+
+	public int showQuery(String sqlQuery, int rows) {
+		try {
+
+			resultSet = statement.executeQuery(sqlQuery);
+
+			//System.out.println("ID\tName\t\t\tAge\tMatches");
+			//System.out.println("==\t================\t===\t=======");
+
+			// processing returned data and printing into console
+			//while (resultSet.next()) {
+			if (!resultSet.next()) {
+				return -1;
+			} else {
+				System.out.println("ID_Operacji\t\tData");
+				for (int i = 1; i <= rows; i++)
+					System.out.print(resultSet.getString(i) + "\t\t\t");
+
+			}
+			while (resultSet.next()) {
+				System.out.println();
+				for (int i = 1; i <= rows; i++)
+					System.out.print(resultSet.getString(i) + "\t\t\t");
+
+			}
+			//resultSet.next();
+			//return resultSet.getString(1);
+			//resultSet.getString(2) + "\t" +
+			//resultSet.getString(3) + "\t" +
+			//resultSet.getString(4) + "\t" +
+			//resultSet.getString(5));
+			//}
+		} catch (SQLException sqlError) {
+			sqlError.printStackTrace();
+		}
+		return 0;
+
+	}
 }

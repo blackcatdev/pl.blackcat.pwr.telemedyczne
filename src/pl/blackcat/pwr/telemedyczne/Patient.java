@@ -1,27 +1,47 @@
 package pl.blackcat.pwr.telemedyczne;
 
-import java.util.Scanner;
+import pl.blackcat.zadaniajava.pesel.checkPesel;
 
-import pl.blackcat.zadaniajava.pesel.*;
+class Patient extends Human {
+	int ID_Operacji;
 
-class Patient {
-	private static Scanner scanner = new Scanner(System.in);
-	private static String pesel;
-	private static String password;
-	//ustanów połączenie z bazą
-	private static Base patientBase = new Base();
-
-	static void main() {
+	void main() {
 		//zdobądź dane pacjenta i sprawdź ich poprawność
 		acquirePesel();
 
+		//Wyświetl operacje, w których uczestniczył pacjent
+		ID_Operacji = showOperations();
+		System.out.println("Wybrana operacja: " + ID_Operacji);
 
-		//patientBase.Query("SELECT * FROM Pacjenci");
+		//zamknij bazę
 		patientBase.closeConnection();
 
 	}
 
-	private static void acquirePesel() {
+	private int showOperations() {
+		int chosenOperation = patientBase.showQuery("SELECT ID_Operacji, Data FROM Operacje WHERE ID_Pacjenta = " + pesel, 2);
+
+		if (chosenOperation == -1) {
+			System.out.println("Nie miałeś żadnej operacji. Zamykam program.");
+			System.exit(3);
+			return 0;
+		} else {
+			System.out.print("\nWybierz operację z listy powyżej: ");
+			chosenOperation = scanner.nextInt();
+			if (patientBase.singleQuery("SELECT ID_Operacji FROM Operacje WHERE ID_Pacjenta = " + pesel + " AND ID_Operacji = " + chosenOperation) == 0)
+				return chosenOperation;
+			else {
+				System.out.println("Wybrałeś błędny numer operacji. Zamykam program.");
+				System.exit(5);
+			}
+
+		}
+
+		return -1;
+
+	}
+
+	private void acquirePesel() {
 
 		System.out.print("Podaj swój pesel: ");
 		pesel = scanner.nextLine();
@@ -29,8 +49,7 @@ class Patient {
 			int peselStatus = patientBase.singleQuery("SELECT ID_Pacjenta FROM Operacje WHERE ID_Pacjenta = " + pesel);
 			if (peselStatus == 0) {
 				acquirePassword();
-			}
-			else {
+			} else {
 				System.out.println("Nie miałeś żadnej operacji. Zamykam program.");
 				System.exit(3);
 			}
@@ -44,7 +63,7 @@ class Patient {
 
 	}
 
-	private static void acquirePassword() {
+	private void acquirePassword() {
 		int passwordStatus;
 		int i;
 		for (i = 0; i < 3; i++) {
@@ -54,8 +73,7 @@ class Patient {
 			if (passwordStatus == 0) {
 				System.out.println("Hasło poprawne");
 				break;
-			}
-			else {
+			} else {
 				System.out.println("Hasło niepoprawne.");
 			}
 

@@ -9,7 +9,8 @@ class Main {
 		char wybor = scanner.next().charAt(0);
 		switch (wybor) {
 			case 'p':
-				Patient.main();
+				Patient patient = new Patient();
+				patient.main();
 				break;
 			case 'l':
 				Doctor.main();
