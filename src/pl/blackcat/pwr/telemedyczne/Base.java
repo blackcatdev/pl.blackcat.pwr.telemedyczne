@@ -91,6 +91,17 @@ class Base {
 		}
 	}
 
+	int getIntQuery(String sqlQuery) {
+		try {
+			resultSet = statement.executeQuery(sqlQuery);
+			if (resultSet.next())
+				return resultSet.getInt(1);
+		} catch (SQLException sqlError) {
+			sqlError.printStackTrace();
+		}
+		return -1;
+	}
+
 	public int showQuery(String sqlQuery, int rows) {
 		try {
 
@@ -104,7 +115,7 @@ class Base {
 			if (!resultSet.next()) {
 				return -1;
 			} else {
-				System.out.println("ID_Operacji\t\tData");
+
 				for (int i = 1; i <= rows; i++)
 					System.out.print(resultSet.getString(i) + "\t\t\t");
 
@@ -129,15 +140,25 @@ class Base {
 
 	}
 
-	public void insertNewRow(int id_operacji, float temperature, int pain) {
+	public void insertNewObservation(int id_operacji, float temperature, int pain, String reccomendations, int drug) {
 		String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-		String query = "INSERT INTO Obserwacje (Data, ID_Operacji, Temperatura, Siła_Bólu, Zalecenia, ID_Leku) VALUES (#" + date + "#, " + id_operacji + "," + temperature + "," + pain + ",NULL,1" + ");";
+		String query = "INSERT INTO Obserwacje (Data, ID_Operacji, Temperatura, Siła_Bólu, Zalecenia, ID_Leku) VALUES (#" + date + "#, " + id_operacji + "," + temperature + "," + pain + "," + reccomendations + ',' + drug + ");";
 		try {
 			statement.executeUpdate(query);
 		} catch (SQLException sqlError) {
 			sqlError.printStackTrace();
 		}
-		System.out.println("Obserwacja zapisana pomyślnie. Zapisz kolejną obserwację zgodnie z zaleceniami lekarza.");
+		System.out.println("Obserwacja zapisana pomyślnie.");
 
 	}
+
+	public void updateObservation(int id_obserwacji) {
+		String query = "UPDATE Obserwacje SET Czy_odebrana = true WHERE ID_Obserwacji = " + id_obserwacji;
+		try {
+			statement.executeUpdate(query);
+		} catch (SQLException sqlError) {
+			sqlError.printStackTrace();
+		}
+	}
+
 }

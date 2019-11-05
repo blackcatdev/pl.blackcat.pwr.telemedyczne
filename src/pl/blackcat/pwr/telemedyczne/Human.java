@@ -1,5 +1,6 @@
 package pl.blackcat.pwr.telemedyczne;
 
+import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -48,6 +49,14 @@ public class Human {
 		} else
 			System.out.println("Niepoprawna wartość. Spróbuj jeszcze raz.");
 		return false;
+	}
+
+	void waitForEnter() {
+		try {
+			System.in.read();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

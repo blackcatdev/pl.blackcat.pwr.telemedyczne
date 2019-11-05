@@ -16,22 +16,51 @@ class Patient extends Human {
 		//Wyświetl operacje, w których uczestniczył pacjent i pozwól mu wybrać jedną
 		ID_Operacji = showOperations();
 
-		//Sprawdź, czy istnieją niezatwierdzone obserwacje
+		//Jeśli istnieją zalecenia dla pacjenta, każ mu się z nimi zapoznać
+		recommendationExist();
 
+		//Zdobądź dane o obserwacji, jeśli zachodzi potrzeba
+		System.out.print("Czy chcesz dodać nową obserwację dla lekarza? (t): ");
+		char wantNewObservation = scanner.next().charAt(0);
+		if (wantNewObservation == 't') {
+			newObservation();
 
-		//Zdobądź dane o obserwacji
-		newObservation();
-
-		//Zapisz dane obserwacji w bazie danych
-		saveNewObservation();
+			//Zapisz dane obserwacji w bazie danych
+			saveNewObservation();
+		}
 
 		//zamknij bazę
 		patientBase.closeConnection();
 
+		//pożegnaj się z pacjentem
+		System.out.println("Zadania wykonane pomyślnie. Życzymy dużo zdrowia!");
+
 	}
 
+	private void recommendationExist() {
+		int ID_Obserwacji = patientBase.getIntQuery("SELECT ID_Obserwacji FROM Obserwacje WHERE ID_Operacji = " + ID_Operacji + " AND Czy_sprawdzona = true AND Czy_odebrana = false");
+		if (ID_Obserwacji == -1)
+			System.out.println("Nie masz żadnych oczekujących zaleceń.");
+		while (ID_Obserwacji != -1) {
+			System.out.println("Lekarz przysłał zalecenia odnośnie obserwacji numer " + ID_Obserwacji + ":");
+			patientBase.showQuery("SELECT Zalecenia FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji, 1);
+			int ID_Leku = patientBase.getIntQuery("SELECT ID_Leku FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji);
+			if (ID_Leku != 1) {
+				System.out.println("\nNależy wziąć lek: ");
+				patientBase.showQuery("SELECT Nazwa_i_Dawka_Leku FROM Obserwacje, Leki WHERE ID_Leku = " + ID_Leku + " AND Obserwacje.ID_Leku = Leki.ID_Leku", 1);
+			}
+			System.out.println("\nZastosuj się do zaleceń i naciśnij ENTER");
+			waitForEnter();
+
+			patientBase.updateObservation(ID_Obserwacji);
+			ID_Obserwacji = patientBase.getIntQuery("SELECT ID_Obserwacji FROM Obserwacje WHERE ID_Operacji = " + ID_Operacji + " AND Czy_sprawdzona = true AND Czy_odebrana = false");
+
+		}
+	}
+
+
 	private void saveNewObservation() {
-		patientBase.insertNewRow(ID_Operacji,temperature,pain);
+		patientBase.insertNewObservation(ID_Operacji, temperature, pain, null, 1);
 
 	}
 
@@ -56,6 +85,7 @@ class Patient extends Human {
 	}
 
 	private int showOperations() {
+		System.out.println("ID_Operacji\t\tData");
 		int chosenOperation = patientBase.showQuery("SELECT ID_Operacji, Data FROM Operacje WHERE ID_Pacjenta = " + pesel, 2);
 
 		if (chosenOperation == -1) {
