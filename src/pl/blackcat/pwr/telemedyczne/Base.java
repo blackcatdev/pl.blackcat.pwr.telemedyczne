@@ -1,10 +1,8 @@
 package pl.blackcat.pwr.telemedyczne;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 class Base {
 	private Connection connection = null;
@@ -128,6 +126,18 @@ class Base {
 			sqlError.printStackTrace();
 		}
 		return 0;
+
+	}
+
+	public void insertNewRow(int id_operacji, float temperature, int pain) {
+		String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		String query = "INSERT INTO Obserwacje (Data, ID_Operacji, Temperatura, Siła_Bólu, Zalecenia, ID_Leku) VALUES (#" + date + "#, " + id_operacji + "," + temperature + "," + pain + ",NULL,1" + ");";
+		try {
+			statement.executeUpdate(query);
+		} catch (SQLException sqlError) {
+			sqlError.printStackTrace();
+		}
+		System.out.println("Obserwacja zapisana pomyślnie. Zapisz kolejną obserwację zgodnie z zaleceniami lekarza.");
 
 	}
 }

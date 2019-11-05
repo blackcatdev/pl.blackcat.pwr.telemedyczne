@@ -4,17 +4,54 @@ import pl.blackcat.zadaniajava.pesel.checkPesel;
 
 class Patient extends Human {
 	int ID_Operacji;
+	float min_temp = 33;
+	float max_temp = 43;
+	float temperature;
+	int pain;
 
 	void main() {
 		//zdobądź dane pacjenta i sprawdź ich poprawność
 		acquirePesel();
 
-		//Wyświetl operacje, w których uczestniczył pacjent
+		//Wyświetl operacje, w których uczestniczył pacjent i pozwól mu wybrać jedną
 		ID_Operacji = showOperations();
-		System.out.println("Wybrana operacja: " + ID_Operacji);
+
+		//Sprawdź, czy istnieją niezatwierdzone obserwacje
+
+
+		//Zdobądź dane o obserwacji
+		newObservation();
+
+		//Zapisz dane obserwacji w bazie danych
+		saveNewObservation();
 
 		//zamknij bazę
 		patientBase.closeConnection();
+
+	}
+
+	private void saveNewObservation() {
+		patientBase.insertNewRow(ID_Operacji,temperature,pain);
+
+	}
+
+	private void newObservation() {
+		System.out.println("\nWybrana operacja: " + ID_Operacji + "\n");
+		do {
+			System.out.print("Podaj swoją obecną temperaturę: ");
+			temperature = getFloat(scanner);
+		}
+		while (!checkValue(temperature, min_temp, max_temp));
+
+		do {
+			System.out.print("Podaj swój stopień bólu w skali 1-10: ");
+			pain = getInteger(scanner);
+		}
+		while (!checkValue(pain, 1, 10));
+
+		System.out.println("Twoja temperatura: " + temperature);
+		System.out.println("Twój poziom bólu: " + pain);
+
 
 	}
 
