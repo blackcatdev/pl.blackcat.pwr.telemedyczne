@@ -3,7 +3,6 @@ package pl.blackcat.pwr.telemedyczne;
 import pl.blackcat.zadaniajava.pesel.checkPesel;
 
 class Patient extends Human {
-	int ID_Operacji;
 	float min_temp = 33;
 	float max_temp = 43;
 	float temperature;
@@ -30,7 +29,7 @@ class Patient extends Human {
 		}
 
 		//zamknij bazę
-		patientBase.closeConnection();
+		healthBase.closeConnection();
 
 		//pożegnaj się z pacjentem
 		System.out.println("Zadania wykonane pomyślnie. Życzymy dużo zdrowia!");
@@ -38,29 +37,29 @@ class Patient extends Human {
 	}
 
 	private void recommendationExist() {
-		int ID_Obserwacji = patientBase.getIntQuery("SELECT ID_Obserwacji FROM Obserwacje WHERE ID_Operacji = " + ID_Operacji + " AND Czy_sprawdzona = true AND Czy_odebrana = false");
+		int ID_Obserwacji = healthBase.getIntQuery("SELECT ID_Obserwacji FROM Obserwacje WHERE ID_Operacji = " + ID_Operacji + " AND Czy_sprawdzona = true AND Czy_odebrana = false");
 		if (ID_Obserwacji == -1)
 			System.out.println("Nie masz żadnych oczekujących zaleceń.");
 		while (ID_Obserwacji != -1) {
 			System.out.println("Lekarz przysłał zalecenia odnośnie obserwacji numer " + ID_Obserwacji + ":");
-			patientBase.showQuery("SELECT Zalecenia FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji, 1);
-			int ID_Leku = patientBase.getIntQuery("SELECT ID_Leku FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji);
+			healthBase.showQuery("SELECT Zalecenia FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji, 1);
+			int ID_Leku = healthBase.getIntQuery("SELECT ID_Leku FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji);
 			if (ID_Leku != 1) {
 				System.out.println("\nNależy wziąć lek: ");
-				patientBase.showQuery("SELECT Nazwa_i_Dawka_Leku FROM Obserwacje, Leki WHERE ID_Leku = " + ID_Leku + " AND Obserwacje.ID_Leku = Leki.ID_Leku", 1);
+				healthBase.showQuery("SELECT Nazwa_i_Dawka_Leku FROM Obserwacje, Leki WHERE ID_Leku = " + ID_Leku + " AND Obserwacje.ID_Leku = Leki.ID_Leku", 1);
 			}
 			System.out.println("\nZastosuj się do zaleceń i naciśnij ENTER");
 			waitForEnter();
 
-			patientBase.updateObservation(ID_Obserwacji);
-			ID_Obserwacji = patientBase.getIntQuery("SELECT ID_Obserwacji FROM Obserwacje WHERE ID_Operacji = " + ID_Operacji + " AND Czy_sprawdzona = true AND Czy_odebrana = false");
+			healthBase.updateObservation(ID_Obserwacji);
+			ID_Obserwacji = healthBase.getIntQuery("SELECT ID_Obserwacji FROM Obserwacje WHERE ID_Operacji = " + ID_Operacji + " AND Czy_sprawdzona = true AND Czy_odebrana = false");
 
 		}
 	}
 
 
 	private void saveNewObservation() {
-		patientBase.insertNewObservation(ID_Operacji, temperature, pain, null, 1);
+		healthBase.insertNewObservation(ID_Operacji, temperature, pain, null, 1);
 
 	}
 
@@ -86,7 +85,7 @@ class Patient extends Human {
 
 	private int showOperations() {
 		System.out.println("ID_Operacji\t\tData");
-		int chosenOperation = patientBase.showQuery("SELECT ID_Operacji, Data FROM Operacje WHERE ID_Pacjenta = " + pesel, 2);
+		int chosenOperation = healthBase.showQuery("SELECT ID_Operacji, Data FROM Operacje WHERE ID_Pacjenta = " + pesel, 2);
 
 		if (chosenOperation == -1) {
 			System.out.println("Nie miałeś żadnej operacji. Zamykam program.");
@@ -95,7 +94,7 @@ class Patient extends Human {
 		} else {
 			System.out.print("\nWybierz operację z listy powyżej: ");
 			chosenOperation = scanner.nextInt();
-			if (patientBase.singleQuery("SELECT ID_Operacji FROM Operacje WHERE ID_Pacjenta = " + pesel + " AND ID_Operacji = " + chosenOperation) == 0)
+			if (healthBase.singleQuery("SELECT ID_Operacji FROM Operacje WHERE ID_Pacjenta = " + pesel + " AND ID_Operacji = " + chosenOperation) == 0)
 				return chosenOperation;
 			else {
 				System.out.println("Wybrałeś błędny numer operacji. Zamykam program.");
@@ -113,7 +112,7 @@ class Patient extends Human {
 		System.out.print("Podaj swój pesel: ");
 		pesel = scanner.nextLine();
 		if (checkPesel.checkPesel(pesel) == 0) {
-			int peselStatus = patientBase.singleQuery("SELECT ID_Pacjenta FROM Operacje WHERE ID_Pacjenta = " + pesel);
+			int peselStatus = healthBase.singleQuery("SELECT ID_Pacjenta FROM Operacje WHERE ID_Pacjenta = " + pesel);
 			if (peselStatus == 0) {
 				acquirePassword();
 			} else {
@@ -136,9 +135,9 @@ class Patient extends Human {
 		for (i = 0; i < 3; i++) {
 			System.out.print("Podaj swoje hasło: ");
 			password = scanner.nextLine();
-			passwordStatus = patientBase.singleQuery("SELECT Hasło FROM Pacjenci WHERE PESEL = " + pesel + " AND HASŁO = \'" + password + "\'");
+			passwordStatus = healthBase.singleQuery("SELECT Hasło FROM Pacjenci WHERE PESEL = " + pesel + " AND HASŁO = \'" + password + "\'");
 			if (passwordStatus == 0) {
-				System.out.println("Hasło poprawne");
+				System.out.println("Hasło poprawne.");
 				break;
 			} else {
 				System.out.println("Hasło niepoprawne.");

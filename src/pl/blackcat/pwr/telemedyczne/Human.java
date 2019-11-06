@@ -9,9 +9,11 @@ public class Human {
 	Scanner scanner = new Scanner(System.in);
 	String pesel;
 	String password;
+	int ID_Operacji;
+
 
 	//ustanów połączenie z bazą
-	Base patientBase = new Base();
+	Base healthBase = new Base();
 
 	float getFloat(Scanner scanner) {
 		while (true) {

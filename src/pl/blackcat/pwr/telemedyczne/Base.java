@@ -117,13 +117,13 @@ class Base {
 			} else {
 
 				for (int i = 1; i <= rows; i++)
-					System.out.print(resultSet.getString(i) + "\t\t\t");
+					System.out.print(resultSet.getString(i) + "\t\t\t\t\t\t");
 
 			}
 			while (resultSet.next()) {
 				System.out.println();
 				for (int i = 1; i <= rows; i++)
-					System.out.print(resultSet.getString(i) + "\t\t\t");
+					System.out.print(resultSet.getString(i) + "\t\t\t\t\t\t");
 
 			}
 			//resultSet.next();

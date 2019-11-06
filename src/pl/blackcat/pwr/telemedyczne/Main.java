@@ -13,7 +13,8 @@ class Main {
 				patient.main();
 				break;
 			case 'l':
-				Doctor.main();
+				Doctor doctor = new Doctor();
+				doctor.main();
 				break;
 			default:
 				System.out.println("Błędny wybór. Zamykam program.");
