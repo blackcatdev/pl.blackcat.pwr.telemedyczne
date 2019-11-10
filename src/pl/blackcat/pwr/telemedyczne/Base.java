@@ -102,6 +102,17 @@ class Base {
 		return -1;
 	}
 
+	String getStringQuery(String sqlQuery) {
+		try {
+			resultSet = statement.executeQuery(sqlQuery);
+			if (resultSet.next())
+				return resultSet.getString(1);
+		} catch (SQLException sqlError) {
+			sqlError.printStackTrace();
+		}
+		return "00000000000";
+	}
+
 	public int showQuery(String sqlQuery, int rows) {
 		try {
 
@@ -161,4 +172,13 @@ class Base {
 		}
 	}
 
+	//TODO: DANGEROUS!
+	public void acceptObservation(int id_obserwacji, String zalecenia) {
+		String query = "UPDATE Obserwacje SET zalecenia = \"" + zalecenia + "\", Czy_sprawdzona = true WHERE ID_Obserwacji = " + id_obserwacji;
+		try {
+			statement.executeUpdate(query);
+		} catch (SQLException sqlError) {
+			sqlError.printStackTrace();
+		}
+	}
 }
