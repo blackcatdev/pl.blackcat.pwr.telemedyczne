@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class Human {
+class Human {
 
 	Scanner scanner = new Scanner(System.in);
 	String pesel;

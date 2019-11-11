@@ -113,7 +113,7 @@ class Base {
 		return "00000000000";
 	}
 
-	public int showQuery(String sqlQuery, int rows) {
+	int showQuery(String sqlQuery, int rows) {
 		try {
 
 			resultSet = statement.executeQuery(sqlQuery);
@@ -151,7 +151,8 @@ class Base {
 
 	}
 
-	public void insertNewObservation(int id_operacji, float temperature, int pain, String reccomendations, int drug) {
+	//TODO: DANGEROUS!
+	void insertNewObservation(int id_operacji, float temperature, int pain, String reccomendations, int drug) {
 		String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		String query = "INSERT INTO Obserwacje (Data, ID_Operacji, Temperatura, Siła_Bólu, Zalecenia, ID_Leku) VALUES (#" + date + "#, " + id_operacji + "," + temperature + "," + pain + "," + reccomendations + ',' + drug + ");";
 		try {
@@ -163,7 +164,7 @@ class Base {
 
 	}
 
-	public void updateObservation(int id_obserwacji) {
+	void updateObservation(int id_obserwacji) {
 		String query = "UPDATE Obserwacje SET Czy_odebrana = true WHERE ID_Obserwacji = " + id_obserwacji;
 		try {
 			statement.executeUpdate(query);
@@ -173,8 +174,8 @@ class Base {
 	}
 
 	//TODO: DANGEROUS!
-	public void acceptObservation(int id_obserwacji, String zalecenia) {
-		String query = "UPDATE Obserwacje SET zalecenia = \"" + zalecenia + "\", Czy_sprawdzona = true WHERE ID_Obserwacji = " + id_obserwacji;
+	void acceptObservation(int id_obserwacji, String zalecenia, int ID_Leku) {
+		String query = "UPDATE Obserwacje SET zalecenia = \"" + zalecenia + "\", Czy_sprawdzona = true, ID_Leku = " + ID_Leku + " WHERE ID_Obserwacji = " + id_obserwacji;
 		try {
 			statement.executeUpdate(query);
 		} catch (SQLException sqlError) {

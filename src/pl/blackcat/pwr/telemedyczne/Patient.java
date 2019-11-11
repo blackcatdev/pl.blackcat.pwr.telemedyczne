@@ -3,10 +3,8 @@ package pl.blackcat.pwr.telemedyczne;
 import pl.blackcat.zadaniajava.pesel.checkPesel;
 
 class Patient extends Human {
-	float min_temp = 33;
-	float max_temp = 43;
-	float temperature;
-	int pain;
+	private float temperature;
+	private int pain;
 
 	void main() {
 		//zdobądź dane pacjenta i sprawdź ich poprawność
@@ -46,7 +44,7 @@ class Patient extends Human {
 			int ID_Leku = healthBase.getIntQuery("SELECT ID_Leku FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji);
 			if (ID_Leku != 1) {
 				System.out.println("\nNależy wziąć lek: ");
-				healthBase.showQuery("SELECT Nazwa_i_Dawka_Leku FROM Obserwacje, Leki WHERE ID_Leku = " + ID_Leku + " AND Obserwacje.ID_Leku = Leki.ID_Leku", 1);
+				healthBase.showQuery("SELECT Nazwa_i_Dawka_Leku FROM Leki WHERE ID_Leku = " + ID_Leku, 1);
 			}
 			System.out.println("\nZastosuj się do zaleceń i naciśnij ENTER");
 			waitForEnter();
@@ -65,6 +63,8 @@ class Patient extends Human {
 
 	private void newObservation() {
 		System.out.println("\nWybrana operacja: " + ID_Operacji + "\n");
+		float min_temp = 33;
+		float max_temp = 43;
 		do {
 			System.out.print("Podaj swoją obecną temperaturę: ");
 			temperature = getFloat(scanner);

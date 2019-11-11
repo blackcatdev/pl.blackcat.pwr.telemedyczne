@@ -3,10 +3,10 @@ package pl.blackcat.pwr.telemedyczne;
 import pl.blackcat.zadaniajava.pesel.checkPesel;
 
 class Doctor extends Human {
-	int ID_Obserwacji;
-	int ID_Leku;
-	int ID_Alergii;
-	String patientPesel;
+	private int ID_Obserwacji;
+	private int ID_Leku;
+	private int ID_Alergii;
+	private String patientPesel;
 
 	void main() {
 		//zdobądź dane pacjenta i sprawdź ich poprawność
@@ -44,7 +44,7 @@ class Doctor extends Human {
 		if (ID_Leku == 1) {
 			chooseMedicine();
 		}
-		healthBase.acceptObservation(ID_Obserwacji, zalecenia);
+		healthBase.acceptObservation(ID_Obserwacji, zalecenia, ID_Leku);
 
 
 	}
@@ -54,8 +54,18 @@ class Doctor extends Human {
 		ID_Alergii = healthBase.getIntQuery("SELECT ID_Alergii_Na_Lek FROM Pacjenci WHERE PESEL = " + patientPesel);
 		System.out.println("ID_Leku\t\t\t\tNazwa i dawka leku");
 		healthBase.showQuery("SELECT ID_Leku, Nazwa_i_Dawka_Leku FROM Leki WHERE ID_Leku <> " + Integer.toString(ID_Alergii),2);
-		System.out.print("\nKtóry lek przepisać pacjentowi: ");
-		//TODO: Dokończyć jutro
+
+		do {
+			System.out.print("\nKtóry lek przepisać pacjentowi: ");
+			ID_Leku = getInteger(scanner);
+			if (ID_Leku == ID_Alergii) {
+				System.out.print("Czy na pewno chcesz przepisać pacjentowi lek, na który ma alergię? (t): ");
+				if (scanner.next().charAt(0) != 't')
+					ID_Leku = -1;
+			}
+		}
+		while (!checkValue(ID_Leku, 1, 6));
+
 
 	}
 
@@ -112,7 +122,7 @@ class Doctor extends Human {
 			return 0;
 		} else {
 			System.out.print("\nWybierz niezatwierdzoną obserwację z listy powyżej: ");
-			chosenObservation = scanner.nextInt(); //TODO: PROGRAM CRASHES WHEN USER ENTERS NOT A NUMBER!
+			chosenObservation = getInteger(scanner);
 			if (healthBase.singleQuery("SELECT ID_Obserwacji FROM Obserwacje, Operacje WHERE ID_Lekarza = " + pesel + " AND ID_Obserwacji = " + chosenObservation + " AND Obserwacje.ID_Operacji = Operacje.ID_Operacji") == 0) {
 				return chosenObservation;
 			} else {
