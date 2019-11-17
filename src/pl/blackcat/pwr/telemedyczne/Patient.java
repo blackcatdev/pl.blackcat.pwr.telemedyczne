@@ -2,12 +2,16 @@ package pl.blackcat.pwr.telemedyczne;
 
 import pl.blackcat.zadaniajava.pesel.checkPesel;
 
+import java.util.Vector;
+
 class Patient extends Human {
 	private float temperature;
 	private int pain;
+	Vector listofOperations = new Vector();
 
 	void main() {
 		//zdobądź dane pacjenta i sprawdź ich poprawność
+		//przeniesiono do GUI
 		acquirePesel();
 
 		//Wyświetl operacje, w których uczestniczył pacjent i pozwól mu wybrać jedną
@@ -107,6 +111,7 @@ class Patient extends Human {
 
 	}
 
+	//przeniesiono do GUI
 	private void acquirePesel() {
 
 		System.out.print("Podaj swój pesel: ");
@@ -129,6 +134,7 @@ class Patient extends Human {
 
 	}
 
+	//przeniesiono do GUI
 	private void acquirePassword() {
 		int passwordStatus;
 		int i;
@@ -148,5 +154,36 @@ class Patient extends Human {
 			System.out.println("Podałeś zbyt dużą ilość razy błędne hasło. Zamykam program.");
 			System.exit(4);
 		}
+	}
+
+	public boolean CheckData(String pesel, String password) {
+		this.pesel = pesel;
+		this.password = password;
+
+		if (checkPesel.checkPesel(pesel) == 0) {
+			int peselStatus = healthBase.singleQuery("SELECT ID_Pacjenta FROM Operacje WHERE ID_Pacjenta = " + pesel);
+			if (peselStatus == 0) {
+				return checkPassword(password);
+			} else {
+				return false;
+			}
+
+		} else {
+			return false;
+
+		}
+
+	}
+
+	Vector showOperationstoGui() {
+		listofOperations = healthBase.resultsToVector("SELECT ID_Operacji, Data FROM Operacje WHERE ID_Pacjenta = " + pesel, 2);
+		for (int i = 0; i < listofOperations.size(); i++)
+			System.out.println(listofOperations.get(i));
+		return listofOperations;
+	}
+
+	private boolean checkPassword(String password) {
+		int passwordStatus = healthBase.singleQuery("SELECT Hasło FROM Pacjenci WHERE PESEL = " + pesel + " AND HASŁO = \'" + password + "\'");
+		return passwordStatus == 0;
 	}
 }

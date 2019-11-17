@@ -8,7 +8,8 @@ class Main {
 			@Override
 			public void run() {
 				try {
-					MyFrame frame = new MyFrame("Telemedica TESTO");
+					MyFrame frame = new MyFrame();
+					frame.MainWindow("Telemedica TEST");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

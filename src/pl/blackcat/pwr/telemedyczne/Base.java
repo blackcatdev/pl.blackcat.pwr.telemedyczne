@@ -3,11 +3,13 @@ package pl.blackcat.pwr.telemedyczne;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Vector;
 
 class Base {
 	private Connection connection = null;
 	private Statement statement = null;
 	private ResultSet resultSet = null;
+	private Vector vector = new Vector();
 
 	Base() {
 		// variables
@@ -111,6 +113,27 @@ class Base {
 			sqlError.printStackTrace();
 		}
 		return "00000000000";
+	}
+
+	Vector resultsToVector(String sqlQuery, int rows) {
+		vector.clear();
+		try {
+			resultSet = statement.executeQuery(sqlQuery);
+
+			if (!resultSet.next())
+				return vector;
+			else {
+				for (int i = 1; i <= rows; i++)
+					vector.add(resultSet.getString(i));
+			}
+			while (resultSet.next()) {
+				for (int i = 1; i <= rows; i++)
+					vector.add(resultSet.getString(i));
+			}
+		} catch (SQLException sqlError) {
+			sqlError.printStackTrace();
+		}
+		return vector;
 	}
 
 	int showQuery(String sqlQuery, int rows) {
