@@ -7,7 +7,9 @@ import java.util.Vector;
 class Patient extends Human {
 	private float temperature;
 	private int pain;
-	Vector listofOperations = new Vector();
+	private Vector listofOperations = new Vector();
+	private float min_temp = 33;
+	private float max_temp = 43;
 
 	void main() {
 		//zdobądź dane pacjenta i sprawdź ich poprawność
@@ -15,9 +17,11 @@ class Patient extends Human {
 		acquirePesel();
 
 		//Wyświetl operacje, w których uczestniczył pacjent i pozwól mu wybrać jedną
+		//przeniesiono do GUI
 		ID_Operacji = showOperations();
 
 		//Jeśli istnieją zalecenia dla pacjenta, każ mu się z nimi zapoznać
+		//przeniesiono do GUI
 		recommendationExist();
 
 		//Zdobądź dane o obserwacji, jeśli zachodzi potrzeba
@@ -38,6 +42,24 @@ class Patient extends Human {
 
 	}
 
+	boolean recommendationExistsGUI() {
+		return healthBase.getIntQuery("SELECT ID_Obserwacji FROM Obserwacje WHERE ID_Operacji = " + ID_Operacji + " AND Czy_sprawdzona = true AND Czy_odebrana = false") != -1;
+	}
+
+	String getRecommendations() {
+		int ID_Obserwacji = healthBase.getIntQuery("SELECT ID_Obserwacji FROM Obserwacje WHERE ID_Operacji = " + ID_Operacji + " AND Czy_sprawdzona = true AND Czy_odebrana = false");
+		String recommendation = "Lekarz przysłał zalecenia odnośnie obserwacji numer " + ID_Obserwacji + ":\n";
+		recommendation = recommendation + healthBase.getStringQuery("SELECT Zalecenia FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji) + "\n";
+		int ID_Leku = healthBase.getIntQuery("SELECT ID_Leku FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji);
+		if (ID_Leku != 1)
+			recommendation = recommendation + "Należy wziąć lek: " + healthBase.getStringQuery("SELECT Nazwa_i_Dawka_Leku FROM Leki WHERE ID_Leku = " + ID_Leku) + "\n";
+		recommendation = recommendation + "Zastosuj się do zaleceń i wciśnij klawisz OK";
+		healthBase.updateObservation(ID_Obserwacji);
+		return recommendation;
+	}
+
+
+	//przeniesiono do GUI
 	private void recommendationExist() {
 		int ID_Obserwacji = healthBase.getIntQuery("SELECT ID_Obserwacji FROM Obserwacje WHERE ID_Operacji = " + ID_Operacji + " AND Czy_sprawdzona = true AND Czy_odebrana = false");
 		if (ID_Obserwacji == -1)
@@ -67,8 +89,7 @@ class Patient extends Human {
 
 	private void newObservation() {
 		System.out.println("\nWybrana operacja: " + ID_Operacji + "\n");
-		float min_temp = 33;
-		float max_temp = 43;
+
 		do {
 			System.out.print("Podaj swoją obecną temperaturę: ");
 			temperature = getFloat(scanner);
@@ -87,6 +108,7 @@ class Patient extends Human {
 
 	}
 
+	//przeniesiono do GUI
 	private int showOperations() {
 		System.out.println("ID_Operacji\t\tData");
 		int chosenOperation = healthBase.showQuery("SELECT ID_Operacji, Data FROM Operacje WHERE ID_Pacjenta = " + pesel, 2);
@@ -177,9 +199,11 @@ class Patient extends Human {
 
 	Vector showOperationstoGui() {
 		listofOperations = healthBase.resultsToVector("SELECT ID_Operacji, Data FROM Operacje WHERE ID_Pacjenta = " + pesel, 2);
-		for (int i = 0; i < listofOperations.size(); i++)
-			System.out.println(listofOperations.get(i));
 		return listofOperations;
+	}
+
+	void setOperationID(int Operation_ID) {
+		ID_Operacji = Operation_ID;
 	}
 
 	private boolean checkPassword(String password) {

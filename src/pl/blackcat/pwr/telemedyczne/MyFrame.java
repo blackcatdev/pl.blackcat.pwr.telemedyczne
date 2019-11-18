@@ -8,12 +8,19 @@ import java.util.Vector;
 
 class MyFrame extends JFrame implements ActionListener {
 
+
 	int x, y;
 	int xsize = 800;
 	int ysize = 600;
+
+	Patient patient = new Patient();
+
+	Vector listOfOperationsVector;
+	Vector listOfOperationsVectorHelper;
+
 	JLabel chooseMode = new JLabel("Jesteś pacjentem czy lekarzem?");
-	JButton patient = new JButton("Pacjentem");
-	JButton doctor = new JButton("Lekarzem");
+	JButton patientMode = new JButton("Pacjentem");
+	JButton doctorMode = new JButton("Lekarzem");
 	JLabel enterData = new JLabel("Podaj swój pesel i hasło");
 	JLabel enterUsername = new JLabel("Podaj pesel:");
 	JLabel enterPassword = new JLabel("Podaj hasło:");
@@ -22,6 +29,7 @@ class MyFrame extends JFrame implements ActionListener {
 	JButton login = new JButton("Zaloguj");
 	JLabel chooseOperation = new JLabel("Wybierz operację:");
 	JButton okayOperation = new JButton("OK");
+	JList listOfOperations = new JList();
 
 	//fonts
 	Font header = new Font("Noto Serif", Font.BOLD, 26);
@@ -46,16 +54,16 @@ class MyFrame extends JFrame implements ActionListener {
 		add(chooseMode);
 
 		//patient button
-		patient.addActionListener(this);
-		patient.setBounds(250, 50, 300, 50);
-		patient.setFont(header);
-		add(patient);
+		patientMode.addActionListener(this);
+		patientMode.setBounds(250, 50, 300, 50);
+		patientMode.setFont(header);
+		add(patientMode);
 
 		//doctor button
-		doctor.addActionListener(this);
-		doctor.setBounds(250, 120, 300, 50);
-		doctor.setFont(header);
-		add(doctor);
+		doctorMode.addActionListener(this);
+		doctorMode.setBounds(250, 120, 300, 50);
+		doctorMode.setFont(header);
+		add(doctorMode);
 
 		//enterData label
 		enterData.setFont(header);
@@ -96,10 +104,10 @@ class MyFrame extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent actionEvent) {
 		//button "patient" click
-		if (actionEvent.getSource() == patient) {
+		if (actionEvent.getSource() == patientMode) {
 			remove(chooseMode);
-			remove(patient);
-			remove(doctor);
+			remove(patientMode);
+			remove(doctorMode);
 			add(enterData);
 			add(enterUsername);
 			add(enterPassword);
@@ -111,7 +119,6 @@ class MyFrame extends JFrame implements ActionListener {
 
 		//button "zaloguj" click
 		if (actionEvent.getSource() == login || actionEvent.getSource() == passwordField) {
-			Patient patient = new Patient();
 			String pesel, password;
 			pesel = usernameField.getText();
 			password = passwordField.getText();
@@ -126,8 +133,8 @@ class MyFrame extends JFrame implements ActionListener {
 				remove(passwordField);
 				remove(login);
 
-				Vector listOfOperationsVector = patient.showOperationstoGui();
-				Vector listOfOperationsVectorHelper = new Vector<Integer>();
+				listOfOperationsVector = patient.showOperationstoGui();
+				listOfOperationsVectorHelper = new Vector<Integer>();
 				for (int i = 1; i < listOfOperationsVector.size(); i = i + 2) {
 					listOfOperationsVectorHelper.add("Operacja o ID: " + listOfOperationsVector.get(i - 1).toString() + " z dnia: " + listOfOperationsVector.get(i).toString());
 				}
@@ -136,18 +143,41 @@ class MyFrame extends JFrame implements ActionListener {
 				chooseOperation.setBounds(220, 0, 600, 40);
 
 
-				JList listOfOperations = new JList(listOfOperationsVectorHelper);
+				listOfOperations = new JList(listOfOperationsVectorHelper);
 				listOfOperations.setFont(dataAcquire);
 				listOfOperations.setBounds(150, 50, 400, 200);
 
+
 				okayOperation.setFont(header);
 				okayOperation.setBounds(280, 270, 150, 50);
+				okayOperation.addActionListener(this);
 
 				add(chooseOperation);
 				add(listOfOperations);
 				add(okayOperation);
 				repaint();
 			}
+		}
+
+		if (actionEvent.getSource() == okayOperation) {
+			int ID_Operacji = Integer.parseInt((listOfOperationsVector.get(listOfOperations.getSelectedIndex() * 2)).toString());
+			patient.setOperationID(ID_Operacji);
+
+			while (patient.recommendationExistsGUI()) {
+				JOptionPane.showMessageDialog(null, patient.getRecommendations());
+			}
+			UIManager.put("OptionPane.yesButtonText", "Tak");
+			UIManager.put("OptionPane.noButtonText", "Nie");
+			UIManager.put("OptionPane.cancelButtonText", "Anuluj");
+			JOptionPane.showMessageDialog(null, "Nie masz żadnych oczekujących zaleceń.");
+			int response = JOptionPane.showConfirmDialog(null, "Czy chcesz dodać nową obserwację dla lekarza?", "Pytanie", JOptionPane.YES_NO_CANCEL_OPTION);
+
+			if (response == 0) {
+				JOptionPane.showMessageDialog(null, "TODO");
+			} else
+				//TODO: zamknij bazę
+				JOptionPane.showMessageDialog(null, "Zadania wykonane pomyślnie. Życzymy dużo zdrowia!");
+			//TODO: zakończ program po OK
 		}
 
 
