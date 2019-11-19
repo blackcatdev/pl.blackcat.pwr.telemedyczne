@@ -35,11 +35,17 @@ class Patient extends Human {
 		}
 
 		//zamknij bazę
+		//przeniesiono do GUI
 		healthBase.closeConnection();
 
 		//pożegnaj się z pacjentem
+		//przeniesiono do GUI
 		System.out.println("Zadania wykonane pomyślnie. Życzymy dużo zdrowia!");
 
+	}
+
+	void closeDatabase() {
+		healthBase.closeConnection();
 	}
 
 	boolean recommendationExistsGUI() {
@@ -81,9 +87,13 @@ class Patient extends Human {
 		}
 	}
 
+	void saveNewObservationGUI(float temperatureLevel, int painLevel) {
+		healthBase.insertNewObservation(ID_Operacji, temperatureLevel, painLevel, null, 1);
+	}
 
+	//przeniesiono do GUI
 	private void saveNewObservation() {
-		healthBase.insertNewObservation(ID_Operacji, temperature, pain, null, 1);
+
 
 	}
 

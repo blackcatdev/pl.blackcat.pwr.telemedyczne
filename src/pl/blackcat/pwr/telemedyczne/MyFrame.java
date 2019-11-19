@@ -1,9 +1,11 @@
 package pl.blackcat.pwr.telemedyczne;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 import java.util.Vector;
 
 class MyFrame extends JFrame implements ActionListener {
@@ -12,6 +14,14 @@ class MyFrame extends JFrame implements ActionListener {
 	int x, y;
 	int xsize = 800;
 	int ysize = 600;
+
+	String[] allowedTemperatures = {"33", "34", "35", "36", "37", "38", "39", "40", "41", "42"};
+	String[] digits = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+
+	JComboBox<String> temperature = new JComboBox<>(allowedTemperatures);
+	JComboBox<String> decimalTemperature = new JComboBox<>(digits);
+	JComboBox<String> painLevelBox = new JComboBox<>(digits);
+
 
 	Patient patient = new Patient();
 
@@ -30,6 +40,10 @@ class MyFrame extends JFrame implements ActionListener {
 	JLabel chooseOperation = new JLabel("Wybierz operację:");
 	JButton okayOperation = new JButton("OK");
 	JList listOfOperations = new JList();
+	JLabel enterObservationData = new JLabel("<html>&emsp;Wprowadź dane o obserwacji,<br>wybierając wartości z pól poniżej</html>", SwingConstants.CENTER);
+	JLabel enterTemperature = new JLabel("Podaj temperaturę: ");
+	JLabel enterPainLevel = new JLabel("Podaj stopień bólu: ");
+	JButton sendToDoctor = new JButton("Zapisz i wyślij obserwację do lekarza");
 
 	//fonts
 	Font header = new Font("Noto Serif", Font.BOLD, 26);
@@ -173,11 +187,61 @@ class MyFrame extends JFrame implements ActionListener {
 			int response = JOptionPane.showConfirmDialog(null, "Czy chcesz dodać nową obserwację dla lekarza?", "Pytanie", JOptionPane.YES_NO_CANCEL_OPTION);
 
 			if (response == 0) {
-				JOptionPane.showMessageDialog(null, "TODO");
-			} else
-				//TODO: zamknij bazę
-				JOptionPane.showMessageDialog(null, "Zadania wykonane pomyślnie. Życzymy dużo zdrowia!");
-			//TODO: zakończ program po OK
+				remove(chooseOperation);
+				remove(listOfOperations);
+				remove(okayOperation);
+
+				enterObservationData.setFont(header);
+				enterObservationData.setBounds(0, 0, 800, 80);
+
+				enterTemperature.setBounds(250, 100, 180, 25);
+				enterTemperature.setFont(dataShow);
+
+				enterPainLevel.setBounds(250, 140, 180, 25);
+				enterPainLevel.setFont(dataShow);
+
+
+				temperature.setBounds(440, 100, 40, 25);
+				temperature.setFont(dataShow);
+
+				JLabel dot = new JLabel(".");
+				dot.setBounds(480, 100, 5, 25);
+				dot.setFont(dataShow);
+
+				decimalTemperature.setBounds(485, 100, 40, 25);
+				decimalTemperature.setFont(dataShow);
+
+				painLevelBox.setBounds(440, 140, 40, 25);
+				painLevelBox.setFont(dataShow);
+
+
+				sendToDoctor.setBounds(200, 180, 400, 50);
+				sendToDoctor.setFont(dataShow);
+				sendToDoctor.addActionListener(this);
+
+				add(enterObservationData);
+				add(enterTemperature);
+				add(enterPainLevel);
+				add(temperature);
+				add(dot);
+				add(decimalTemperature);
+				add(painLevelBox);
+				add(sendToDoctor);
+				repaint();
+
+
+			} else {
+				closeProgram();
+
+			}
+		}
+
+		if (actionEvent.getSource() == sendToDoctor) {
+			float temperatureLevel = Float.parseFloat(temperature.getSelectedItem() + "." + decimalTemperature.getSelectedItem());
+			int painLevel = Integer.parseInt((String) Objects.requireNonNull(painLevelBox.getSelectedItem()));
+			patient.saveNewObservationGUI(temperatureLevel, painLevel);
+			closeProgram();
+
 		}
 
 
@@ -188,5 +252,11 @@ class MyFrame extends JFrame implements ActionListener {
 		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 		x = (int) ((dimension.getWidth() - xsize) / 2);
 		y = (int) ((dimension.getHeight() - ysize) / 2);
+	}
+
+	void closeProgram() {
+		patient.closeDatabase();
+		JOptionPane.showMessageDialog(null, "Zadania wykonane pomyślnie. Życzymy dużo zdrowia!");
+		System.exit(0);
 	}
 }
