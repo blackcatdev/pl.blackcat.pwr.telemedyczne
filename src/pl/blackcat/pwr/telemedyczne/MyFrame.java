@@ -23,7 +23,8 @@ class MyFrame extends JFrame implements ActionListener {
 	JComboBox<String> painLevelBox = new JComboBox<>(digits);
 
 
-	Patient patient = new Patient();
+	Patient patient;
+	Doctor doctor;
 
 	Vector listOfOperationsVector;
 	Vector listOfOperationsVectorHelper;
@@ -35,8 +36,9 @@ class MyFrame extends JFrame implements ActionListener {
 	JLabel enterUsername = new JLabel("Podaj pesel:");
 	JLabel enterPassword = new JLabel("Podaj hasło:");
 	JTextArea usernameField = new JTextArea();
-	JPasswordField passwordField = new JPasswordField();
-	JButton login = new JButton("Zaloguj");
+	JPasswordField passwordFieldP = new JPasswordField();
+	JPasswordField passwordFieldD = new JPasswordField();
+	JButton loginPatient = new JButton("Zaloguj");
 	JLabel chooseOperation = new JLabel("Wybierz operację:");
 	JButton okayOperation = new JButton("OK");
 	JList listOfOperations = new JList();
@@ -44,6 +46,8 @@ class MyFrame extends JFrame implements ActionListener {
 	JLabel enterTemperature = new JLabel("Podaj temperaturę: ");
 	JLabel enterPainLevel = new JLabel("Podaj stopień bólu: ");
 	JButton sendToDoctor = new JButton("Zapisz i wyślij obserwację do lekarza");
+
+	JButton loginDoctor = new JButton("Zaloguj");
 
 	//fonts
 	Font header = new Font("Noto Serif", Font.BOLD, 26);
@@ -94,15 +98,26 @@ class MyFrame extends JFrame implements ActionListener {
 		usernameField.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		usernameField.setFont(dataAcquire);
 
-		passwordField.setBounds(380, 90, 120, 30);
-		passwordField.setBorder(usernameField.getBorder());
-		passwordField.setFont(dataAcquire);
-		passwordField.addActionListener(this);
+		passwordFieldP.setBounds(380, 90, 120, 30);
+		passwordFieldP.setBorder(usernameField.getBorder());
+		passwordFieldP.setFont(dataAcquire);
+		passwordFieldP.addActionListener(this);
 
-		//login button
-		login.setBounds(310, 130, 150, 50);
-		login.setFont(header);
-		login.addActionListener(this);
+		//loginPatient button
+		loginPatient.setBounds(310, 130, 150, 50);
+		loginPatient.setFont(header);
+		loginPatient.addActionListener(this);
+
+		//loginDoctor button
+		loginDoctor.setBounds(310, 130, 150, 50);
+		loginDoctor.setFont(header);
+		loginDoctor.addActionListener(this);
+
+		//password data field for doctor
+		passwordFieldD.setBounds(380, 90, 120, 30);
+		passwordFieldD.setBorder(usernameField.getBorder());
+		passwordFieldD.setFont(dataAcquire);
+		passwordFieldD.addActionListener(this);
 
 		//choosing operation
 		chooseOperation.setFont(header);
@@ -119,6 +134,7 @@ class MyFrame extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent actionEvent) {
 		//button "patient" click
 		if (actionEvent.getSource() == patientMode) {
+			patient = new Patient();
 			remove(chooseMode);
 			remove(patientMode);
 			remove(doctorMode);
@@ -126,16 +142,16 @@ class MyFrame extends JFrame implements ActionListener {
 			add(enterUsername);
 			add(enterPassword);
 			add(usernameField);
-			add(passwordField);
-			add(login);
+			add(passwordFieldP);
+			add(loginPatient);
 			repaint();
 		}
 
 		//button "zaloguj" click
-		if (actionEvent.getSource() == login || actionEvent.getSource() == passwordField) {
+		if (actionEvent.getSource() == loginPatient || actionEvent.getSource() == passwordFieldP) {
 			String pesel, password;
 			pesel = usernameField.getText();
-			password = passwordField.getText();
+			password = passwordFieldP.getText();
 			if (patient.CheckData(pesel, password) == false) {
 				JOptionPane.showMessageDialog(null, "Podałeś błędne dane lub nie miałeś żadnej operacji!");
 			} else {
@@ -144,8 +160,8 @@ class MyFrame extends JFrame implements ActionListener {
 				remove(enterUsername);
 				remove(enterPassword);
 				remove(usernameField);
-				remove(passwordField);
-				remove(login);
+				remove(passwordFieldP);
+				remove(loginPatient);
 
 				listOfOperationsVector = patient.showOperationstoGui();
 				listOfOperationsVectorHelper = new Vector<Integer>();
@@ -234,6 +250,8 @@ class MyFrame extends JFrame implements ActionListener {
 				closeProgram();
 
 			}
+
+
 		}
 
 		if (actionEvent.getSource() == sendToDoctor) {
@@ -242,6 +260,32 @@ class MyFrame extends JFrame implements ActionListener {
 			patient.saveNewObservationGUI(temperatureLevel, painLevel);
 			closeProgram();
 
+		}
+		//button "Doctor" click
+		if (actionEvent.getSource() == doctorMode) {
+			doctor = new Doctor();
+			remove(chooseMode);
+			remove(patientMode);
+			remove(doctorMode);
+			add(enterData);
+			add(enterUsername);
+			add(enterPassword);
+			add(usernameField);
+			add(passwordFieldD);
+			add(loginDoctor);
+			repaint();
+		}
+
+		//button "Zaloguj" doctor click
+		if (actionEvent.getSource() == loginDoctor || actionEvent.getSource() == passwordFieldD) {
+			String pesel, password;
+			pesel = usernameField.getText();
+			password = passwordFieldD.getText();
+			if (doctor.CheckData(pesel, password) == false) {
+				JOptionPane.showMessageDialog(null, "Podałeś błędne dane lub nie miałeś żadnej operacji!");
+			} else {
+				JOptionPane.showMessageDialog(null, "Dane poprawne!");
+			}
 		}
 
 

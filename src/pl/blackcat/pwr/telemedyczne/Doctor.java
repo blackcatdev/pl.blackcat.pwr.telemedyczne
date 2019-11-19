@@ -9,7 +9,8 @@ class Doctor extends Human {
 	private String patientPesel;
 
 	void main() {
-		//zdobądź dane pacjenta i sprawdź ich poprawność
+		//zdobądź dane lekarza i sprawdź ich poprawność
+		//przeniesiono do GUI
 		acquirePesel();
 
 		//Sprawdź, czy do którejś operacji prowadzonej przez lekarza istnieją niezatwierdzone obserwacje
@@ -89,6 +90,30 @@ class Doctor extends Human {
 		}
 
 
+	}
+
+	public boolean CheckData(String pesel, String password) {
+		this.pesel = pesel;
+		this.password = password;
+
+		if (checkPesel.checkPesel(pesel) == 0) {
+			int peselStatus = healthBase.singleQuery("SELECT ID_Lekarza FROM Operacje WHERE ID_Lekarza = " + pesel);
+			if (peselStatus == 0) {
+				return checkPassword(password);
+			} else {
+				return false;
+			}
+
+		} else {
+			return false;
+
+		}
+
+	}
+
+	private boolean checkPassword(String password) {
+		int passwordStatus = healthBase.singleQuery("SELECT Hasło FROM Lekarze WHERE PESEL = " + pesel + " AND HASŁO = \'" + password + "\'");
+		return passwordStatus == 0;
 	}
 
 	private void acquirePassword() {
