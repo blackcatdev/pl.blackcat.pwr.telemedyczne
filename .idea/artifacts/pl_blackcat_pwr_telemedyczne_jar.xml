@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="pl.blackcat.pwr.telemedyczne:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/pl_blackcat_pwr_telemedyczne_jar</output-path>
+    <root id="archive" name="pl.blackcat.pwr.telemedyczne.jar">
+      <element id="module-output" name="pl.blackcat.pwr.telemedyczne" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/pl/blackcat/pwr/telemedyczne/commons-logging-1.1.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/pl/blackcat/pwr/telemedyczne/hsqldb-2.3.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/pl/blackcat/pwr/telemedyczne/ucanaccess-4.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/pl/blackcat/pwr/telemedyczne/commons-lang-2.6.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/pl/blackcat/pwr/telemedyczne/jackcess-2.1.6.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

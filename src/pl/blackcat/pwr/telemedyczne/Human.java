@@ -3,6 +3,7 @@ package pl.blackcat.pwr.telemedyczne;
 import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.Vector;
 
 class Human {
 
@@ -10,6 +11,7 @@ class Human {
 	String pesel;
 	String password;
 	int ID_Operacji;
+	protected Vector listofOperations = new Vector();
 
 
 	//ustanów połączenie z bazą
