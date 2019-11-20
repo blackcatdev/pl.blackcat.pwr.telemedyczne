@@ -5,6 +5,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Objects;
 import java.util.Vector;
 
@@ -114,6 +116,18 @@ class MyFrame extends JFrame implements ActionListener {
 		usernameField.setBounds(380, 50, 120, 30);
 		usernameField.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		usernameField.setFont(dataAcquire);
+
+		usernameField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_TAB) {
+					usernameField.transferFocus();
+					e.consume();
+				}
+			}
+		});
+
+
 
 		passwordFieldP.setBounds(380, 90, 120, 30);
 		passwordFieldP.setBorder(usernameField.getBorder());
@@ -287,6 +301,17 @@ class MyFrame extends JFrame implements ActionListener {
 			add(enterUsername);
 			add(enterPassword);
 			add(usernameField);
+
+			usernameField.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_TAB) {
+						usernameField.transferFocus();
+						e.consume();
+					}
+				}
+			});
+
 			add(passwordFieldD);
 			add(loginDoctor);
 			repaint();

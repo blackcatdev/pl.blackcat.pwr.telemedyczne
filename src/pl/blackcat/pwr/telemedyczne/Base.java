@@ -27,10 +27,10 @@ class Base {
 		// Krok 2: Otwarcie bazy danych
 		try {
 
-			String msAccDB = "C:\\Users\\Marcin\\IdeaProjects\\pl.blackcat.pwr.telemedyczne\\src\\pl\\blackcat\\pwr\\telemedyczne\\"
-					+ "SystemyTelemedyczne.accdb";
+			String msAccDB = "SystemyTelemedyczne.accdb";
 			String dbURL = "jdbc:ucanaccess://"
 					+ msAccDB;
+
 
 			// Step 2.A: Create and
 			// get connection using DriverManager class
