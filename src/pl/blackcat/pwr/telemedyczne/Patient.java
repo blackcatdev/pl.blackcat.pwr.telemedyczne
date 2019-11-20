@@ -5,11 +5,6 @@ import pl.blackcat.zadaniajava.pesel.checkPesel;
 import java.util.Vector;
 
 class Patient extends Human {
-	private float temperature;
-	private int pain;
-	private Vector listofOperations = new Vector();
-	private float min_temp = 33;
-	private float max_temp = 43;
 
 	void main() {
 		//zdobądź dane pacjenta i sprawdź ich poprawność
@@ -25,6 +20,7 @@ class Patient extends Human {
 		recommendationExist();
 
 		//Zdobądź dane o obserwacji, jeśli zachodzi potrzeba
+		//przeniesiono do GUI
 		System.out.print("Czy chcesz dodać nową obserwację dla lekarza? (t): ");
 		char wantNewObservation = scanner.next().charAt(0);
 		if (wantNewObservation == 't') {
@@ -100,12 +96,16 @@ class Patient extends Human {
 	private void newObservation() {
 		System.out.println("\nWybrana operacja: " + ID_Operacji + "\n");
 
+		float temperature;
+		float min_temp = 33;
+		float max_temp = 43;
 		do {
 			System.out.print("Podaj swoją obecną temperaturę: ");
 			temperature = getFloat(scanner);
 		}
 		while (!checkValue(temperature, min_temp, max_temp));
 
+		int pain;
 		do {
 			System.out.print("Podaj swój stopień bólu w skali 1-10: ");
 			pain = getInteger(scanner);
@@ -188,7 +188,7 @@ class Patient extends Human {
 		}
 	}
 
-	public boolean CheckData(String pesel, String password) {
+	boolean CheckData(String pesel, String password) {
 		this.pesel = pesel;
 		this.password = password;
 

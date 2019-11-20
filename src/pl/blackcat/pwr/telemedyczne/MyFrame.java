@@ -8,56 +8,73 @@ import java.awt.event.ActionListener;
 import java.util.Objects;
 import java.util.Vector;
 
+
 class MyFrame extends JFrame implements ActionListener {
 
 
-	int x, y;
-	int xsize = 800;
-	int ysize = 600;
-
-	String[] allowedTemperatures = {"33", "34", "35", "36", "37", "38", "39", "40", "41", "42"};
-	String[] digits = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-
-	JComboBox<String> temperature = new JComboBox<>(allowedTemperatures);
-	JComboBox<String> decimalTemperature = new JComboBox<>(digits);
-	JComboBox<String> painLevelBox = new JComboBox<>(digits);
+	private int x, y;
+	private int xsize = 800;
+	private int ysize = 600;
 
 
-	Patient patient;
-	Doctor doctor;
+	private String[] allowedTemperatures = {"33", "34", "35", "36", "37", "38", "39", "40", "41", "42"};
+	private String[] digits = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
-	Vector listOfOperationsVector;
-	Vector listOfOperationsVectorHelper;
+	private JComboBox<String> temperature = new JComboBox<>(allowedTemperatures);
+	private JComboBox<String> decimalTemperature = new JComboBox<>(digits);
+	private JComboBox<String> painLevelBox = new JComboBox<>(digits);
 
-	JLabel chooseMode = new JLabel("Jesteś pacjentem czy lekarzem?");
-	JButton patientMode = new JButton("Pacjentem");
-	JButton doctorMode = new JButton("Lekarzem");
-	JLabel enterData = new JLabel("Podaj swój pesel i hasło");
-	JLabel enterUsername = new JLabel("Podaj pesel:");
-	JLabel enterPassword = new JLabel("Podaj hasło:");
-	JTextArea usernameField = new JTextArea();
-	JPasswordField passwordFieldP = new JPasswordField();
-	JPasswordField passwordFieldD = new JPasswordField();
-	JButton loginPatient = new JButton("Zaloguj");
-	JLabel chooseOperation = new JLabel("Wybierz operację:");
-	JButton okayOperation = new JButton("OK");
-	JList listOfOperations = new JList();
-	JLabel enterObservationData = new JLabel("<html>&emsp;Wprowadź dane o obserwacji,<br>wybierając wartości z pól poniżej</html>", SwingConstants.CENTER);
-	JLabel enterTemperature = new JLabel("Podaj temperaturę: ");
-	JLabel enterPainLevel = new JLabel("Podaj stopień bólu: ");
-	JButton sendToDoctor = new JButton("Zapisz i wyślij obserwację do lekarza");
 
-	JButton loginDoctor = new JButton("Zaloguj");
+	private Patient patient;
+	private Doctor doctor;
+
+	private Vector listOfOperationsVector = new Vector();
+	private Vector listOfOperationsVectorHelper = new Vector();
+
+	private JLabel chooseMode = new JLabel("Jesteś pacjentem czy lekarzem?");
+	private JButton patientMode = new JButton("Pacjentem");
+	private JButton doctorMode = new JButton("Lekarzem");
+	private JLabel enterData = new JLabel("Podaj swój pesel i hasło");
+	private JLabel enterUsername = new JLabel("Podaj pesel:");
+	private JLabel enterPassword = new JLabel("Podaj hasło:");
+	private JTextArea usernameField = new JTextArea();
+	private JPasswordField passwordFieldP = new JPasswordField();
+	private JPasswordField passwordFieldD = new JPasswordField();
+	private JButton loginPatient = new JButton("Zaloguj");
+	private JLabel chooseOperation = new JLabel("Wybierz operację:");
+	private JButton okayOperation = new JButton("OK");
+	private JList listOfOperations = new JList();
+	private JLabel enterObservationData = new JLabel("<html>&emsp;Wprowadź dane o obserwacji,<br>wybierając wartości z pól poniżej</html>", SwingConstants.CENTER);
+	private JLabel enterTemperature = new JLabel("Podaj temperaturę: ");
+	private JLabel enterPainLevel = new JLabel("Podaj stopień bólu: ");
+	private JButton sendToDoctor = new JButton("Zapisz i wyślij obserwację do lekarza");
+
+	private JButton loginDoctor = new JButton("Zaloguj");
+	private JLabel chooseObservation = new JLabel("Wybierz obserwację:");
+	private JList listOfObservations;
+	private JButton okayObservation = new JButton("OK");
+	private JButton okayRecommendation = new JButton("OK");
+	private JLabel patientState = new JLabel("Stan pacjenta:");
+	private JLabel patientTemperature1 = new JLabel("Temperatura: ");
+	private JLabel patientPainLevel1 = new JLabel("Stopień bólu: ");
+	private JLabel chooseMedicineQuestion = new JLabel("Który lek ma wziąć pacjent?");
+	private JList listOfMedicine;
+	private JLabel legendForDoctor = new JLabel("Pogrubioną czcionką zaznaczono stale zażywany lek przez pacjenta a czerwoną obwódką lek, na który pacjent ma alergię.");
+	private JLabel enterRecommendations = new JLabel("Wpisz zalecenia dla pacjenta:");
+	private JTextArea recommendationForPatient = new JTextArea();
+
 
 	//fonts
-	Font header = new Font("Noto Serif", Font.BOLD, 26);
-	Font dataShow = new Font("Noto Serif", Font.BOLD, 16);
-	Font dataAcquire = new Font("Noto Serif", Font.PLAIN, 16);
+	private Font header = new Font("Noto Serif", Font.BOLD, 26);
+	private Font dataShow = new Font("Noto Serif", Font.BOLD, 16);
+	private Font dataAcquire = new Font("Noto Serif", Font.PLAIN, 16);
+	private Font patientStateFont = new Font("Noto Serif", Font.BOLD, 22);
+	private Font smallInfo = new Font("Noto Serif", Font.ITALIC, 10);
 
 
-	public void MainWindow(String title) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+	void MainWindow() {
 		//Window settings
-		setTitle(title);
+		setTitle("Telemedica TEST");
 		getDimensions();
 		setLocation(x, y);
 		setSize(xsize, ysize);
@@ -152,7 +169,7 @@ class MyFrame extends JFrame implements ActionListener {
 			String pesel, password;
 			pesel = usernameField.getText();
 			password = passwordFieldP.getText();
-			if (patient.CheckData(pesel, password) == false) {
+			if (!patient.CheckData(pesel, password)) {
 				JOptionPane.showMessageDialog(null, "Podałeś błędne dane lub nie miałeś żadnej operacji!");
 			} else {
 				JOptionPane.showMessageDialog(null, "Dane poprawne!");
@@ -164,7 +181,6 @@ class MyFrame extends JFrame implements ActionListener {
 				remove(loginPatient);
 
 				listOfOperationsVector = patient.showOperationstoGui();
-				listOfOperationsVectorHelper = new Vector<Integer>();
 				for (int i = 1; i < listOfOperationsVector.size(); i = i + 2) {
 					listOfOperationsVectorHelper.add("Operacja o ID: " + listOfOperationsVector.get(i - 1).toString() + " z dnia: " + listOfOperationsVector.get(i).toString());
 				}
@@ -278,29 +294,154 @@ class MyFrame extends JFrame implements ActionListener {
 
 		//button "Zaloguj" doctor click
 		if (actionEvent.getSource() == loginDoctor || actionEvent.getSource() == passwordFieldD) {
-			String pesel, password;
-			pesel = usernameField.getText();
-			password = passwordFieldD.getText();
-			if (doctor.CheckData(pesel, password) == false) {
+			String pesel = usernameField.getText();
+			String password = passwordFieldD.getText();
+			if (!doctor.CheckData(pesel, password)) {
 				JOptionPane.showMessageDialog(null, "Podałeś błędne dane lub nie miałeś żadnej operacji!");
 			} else {
 				JOptionPane.showMessageDialog(null, "Dane poprawne!");
+				remove(enterData);
+				remove(enterUsername);
+				remove(enterPassword);
+				remove(usernameField);
+				remove(passwordFieldD);
+				remove(loginDoctor);
+
+				listOfOperationsVector.clear();
+				listOfOperationsVectorHelper.clear();
+
+				listOfOperationsVector = doctor.showOperationstoGui();
+				listOfOperationsVectorHelper = new Vector();
+				for (int i = 2; i < listOfOperationsVector.size(); i = i + 3) {
+					listOfOperationsVectorHelper.add("Obserwacja o ID " + listOfOperationsVector.get(i - 2).toString() + " dotycząca operacji o ID " + listOfOperationsVector.get(i - 1).toString() + " z dnia: " + listOfOperationsVector.get(i).toString());
+				}
+
+				chooseObservation.setFont(header);
+				chooseObservation.setBounds(220, 0, 600, 40);
+
+				listOfObservations = new JList(listOfOperationsVectorHelper);
+				listOfObservations.setFont(dataAcquire);
+				listOfObservations.setBounds(50, 50, 650, 400);
+
+				okayObservation.setFont(header);
+				okayObservation.setBounds(280, 470, 150, 50);
+				okayObservation.addActionListener(this);
+
+				add(chooseObservation);
+				add(listOfObservations);
+				add(okayObservation);
+				repaint();
+
 			}
+		}
+
+		if (actionEvent.getSource() == okayObservation) {
+			System.out.println(listOfObservations.getSelectedIndex() * 3);
+			System.out.println(listOfOperationsVector.get(listOfObservations.getSelectedIndex() * 3));
+			System.out.println("\n");
+
+
+			int ID_Obserwacji = Integer.parseInt((listOfOperationsVector.get(listOfObservations.getSelectedIndex() * 3)).toString());
+			doctor.setObservationID(ID_Obserwacji);
+
+			remove(chooseObservation);
+			remove(listOfObservations);
+			remove(okayObservation);
+
+			JLabel observationDetails = new JLabel("Zapoznaj się z obserwacją.");
+			observationDetails.setBounds(220, 0, 600, 40);
+			observationDetails.setFont(header);
+
+			patientState.setBounds(300, 50, 200, 40);
+			patientState.setFont(patientStateFont);
+
+			patientTemperature1.setBounds(320, 100, 120, 25);
+			patientTemperature1.setFont(dataAcquire);
+
+			JLabel patientTemperature2 = new JLabel(doctor.getTemperature());
+			patientTemperature2.setBounds(440, 100, 40, 25);
+			patientTemperature2.setFont(dataShow);
+
+			patientPainLevel1.setBounds(320, 135, 120, 25);
+			patientPainLevel1.setFont(dataAcquire);
+
+			JLabel patientPainLevel2 = new JLabel(doctor.getPainLevel());
+			patientPainLevel2.setBounds(440, 135, 40, 25);
+			patientPainLevel2.setFont(dataShow);
+
+
+			chooseMedicineQuestion.setBounds(230, 170, 350, 40);
+			chooseMedicineQuestion.setFont(patientStateFont);
+
+			int ID_Stalego_Leku = doctor.getPatientMedicine();
+			int ID_Alergii = doctor.getPatientAllergy();
+
+			Medicine.ID_Alergii = ID_Alergii;
+			Medicine.ID_Stalego_Leku = ID_Stalego_Leku;
+
+			listOfMedicine = new JList(doctor.showMedicine());
+			listOfMedicine.setBounds(230, 220, 330, 160);
+			listOfMedicine.setFont(dataAcquire);
+			listOfMedicine.setSelectedIndex(ID_Stalego_Leku - 1);
+			ListOfMedicineRenderer medicineRenderer = new ListOfMedicineRenderer();
+			listOfMedicine.setCellRenderer(medicineRenderer);
+
+			legendForDoctor.setBounds(100, 380, 600, 20);
+			legendForDoctor.setFont(smallInfo);
+
+			enterRecommendations.setBounds(270, 410, 340, 25);
+			enterRecommendations.setFont(dataShow);
+
+			recommendationForPatient.setBounds(100, 440, 600, 25);
+			recommendationForPatient.setFont(dataAcquire);
+
+			okayRecommendation.setBounds(325, 475, 150, 50);
+			okayRecommendation.setFont(header);
+			okayRecommendation.addActionListener(this);
+
+
+			add(observationDetails);
+			add(patientState);
+			add(patientTemperature1);
+			add(patientTemperature2);
+			add(patientPainLevel1);
+			add(patientPainLevel2);
+			add(chooseMedicineQuestion);
+			add(listOfMedicine);
+			add(legendForDoctor);
+			add(enterRecommendations);
+			add(recommendationForPatient);
+			add(okayRecommendation);
+
+			repaint();
+
+
+		}
+
+		if (actionEvent.getSource() == okayRecommendation) {
+			String zalecenia = recommendationForPatient.getText();
+			int ID_Leku = listOfMedicine.getSelectedIndex() + 1;
+			doctor.acceptObservationsGUI(zalecenia, ID_Leku);
+			JOptionPane.showMessageDialog(null, "Zalecenia zostały zapisane pomyślnie. Do zobaczenia!");
+			System.exit(0);
+
 		}
 
 
 	}
 
 
-	void getDimensions() {
+	private void getDimensions() {
 		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 		x = (int) ((dimension.getWidth() - xsize) / 2);
 		y = (int) ((dimension.getHeight() - ysize) / 2);
 	}
 
-	void closeProgram() {
+	private void closeProgram() {
 		patient.closeDatabase();
 		JOptionPane.showMessageDialog(null, "Zadania wykonane pomyślnie. Życzymy dużo zdrowia!");
 		System.exit(0);
 	}
+
+
 }

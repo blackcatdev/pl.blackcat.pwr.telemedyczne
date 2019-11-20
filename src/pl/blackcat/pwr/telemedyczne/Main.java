@@ -9,7 +9,7 @@ class Main {
 			public void run() {
 				try {
 					MyFrame frame = new MyFrame();
-					frame.MainWindow("Telemedica TEST");
+					frame.MainWindow();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

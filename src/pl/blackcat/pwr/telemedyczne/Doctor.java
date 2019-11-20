@@ -2,10 +2,11 @@ package pl.blackcat.pwr.telemedyczne;
 
 import pl.blackcat.zadaniajava.pesel.checkPesel;
 
+import java.util.Vector;
+
 class Doctor extends Human {
 	private int ID_Obserwacji;
 	private int ID_Leku;
-	private int ID_Alergii;
 	private String patientPesel;
 
 	void main() {
@@ -13,7 +14,9 @@ class Doctor extends Human {
 		//przeniesiono do GUI
 		acquirePesel();
 
+
 		//Sprawdź, czy do którejś operacji prowadzonej przez lekarza istnieją niezatwierdzone obserwacje
+		//przeniesiono do GUI
 		while (true) {
 			System.out.println("\n");
 			ID_Obserwacji = showOperations();
@@ -50,11 +53,15 @@ class Doctor extends Human {
 
 	}
 
+	void acceptObservationsGUI(String zalecenia, int ID_Leku) {
+		healthBase.acceptObservation(ID_Obserwacji, zalecenia, ID_Leku);
+	}
+
 	private void chooseMedicine() {
 		System.out.println("\nDostępne leki dla pacjenta z wykluczeniem leku, na który ma alergię:");
-		ID_Alergii = healthBase.getIntQuery("SELECT ID_Alergii_Na_Lek FROM Pacjenci WHERE PESEL = " + patientPesel);
+		int ID_Alergii = healthBase.getIntQuery("SELECT ID_Alergii_Na_Lek FROM Pacjenci WHERE PESEL = " + patientPesel);
 		System.out.println("ID_Leku\t\t\t\tNazwa i dawka leku");
-		healthBase.showQuery("SELECT ID_Leku, Nazwa_i_Dawka_Leku FROM Leki WHERE ID_Leku <> " + Integer.toString(ID_Alergii),2);
+		healthBase.showQuery("SELECT ID_Leku, Nazwa_i_Dawka_Leku FROM Leki WHERE ID_Leku <> " + Integer.toString(ID_Alergii), 2);
 
 		do {
 			System.out.print("\nKtóry lek przepisać pacjentowi: ");
@@ -157,8 +164,40 @@ class Doctor extends Human {
 
 		}
 
+
 		return -1;
 
+	}
+
+	Vector showOperationstoGui() {
+		listofOperations = healthBase.resultsToVector("SELECT ID_Obserwacji, ID_Operacji, Data FROM Obserwacje, Operacje WHERE ID_Lekarza = " + pesel + " AND Obserwacje.ID_Operacji = Operacje.ID_Operacji AND Obserwacje.Czy_sprawdzona = false", 3);
+		return listofOperations;
+	}
+
+	void setObservationID(int ID_Obserwacji) {
+		this.ID_Obserwacji = ID_Obserwacji;
+		patientPesel = healthBase.getStringQuery("SELECT Operacje.ID_Pacjenta FROM Operacje, Obserwacje WHERE Obserwacje.ID_Operacji = Operacje.ID_Operacji AND Obserwacje.ID_Obserwacji = " + ID_Obserwacji);
+	}
+
+	public String getTemperature() {
+		return healthBase.getStringQuery("SELECT Temperatura FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji);
+
+	}
+
+	public String getPainLevel() {
+		return healthBase.getStringQuery("SELECT Siła_bólu FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji);
+	}
+
+	int getPatientMedicine() {
+		return healthBase.getIntQuery("SELECT ID_Leku FROM Leki, Pacjenci WHERE Pacjenci.ID_Stalego_Leku = Leki.ID_Leku AND Pacjenci.PESEL = " + patientPesel);
+	}
+
+	int getPatientAllergy() {
+		return healthBase.getIntQuery("SELECT ID_Alergii_Na_Lek FROM Pacjenci WHERE PESEL = " + patientPesel);
+	}
+
+	Vector showMedicine() {
+		return healthBase.resultsToVector("SELECT Nazwa_i_Dawka_Leku FROM Leki", 1);
 	}
 }
 
