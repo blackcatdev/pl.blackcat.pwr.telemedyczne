@@ -13,6 +13,8 @@ import java.util.Vector;
 
 class MyFrame extends JFrame implements ActionListener {
 
+	int ID_Alergii;
+
 
 	private int x, y;
 	private int xsize = 800;
@@ -126,7 +128,6 @@ class MyFrame extends JFrame implements ActionListener {
 				}
 			}
 		});
-
 
 
 		passwordFieldP.setBounds(380, 90, 120, 30);
@@ -399,7 +400,7 @@ class MyFrame extends JFrame implements ActionListener {
 			chooseMedicineQuestion.setFont(patientStateFont);
 
 			int ID_Stalego_Leku = doctor.getPatientMedicine();
-			int ID_Alergii = doctor.getPatientAllergy();
+			ID_Alergii = doctor.getPatientAllergy();
 
 			Medicine.ID_Alergii = ID_Alergii;
 			Medicine.ID_Stalego_Leku = ID_Stalego_Leku;
@@ -446,12 +447,20 @@ class MyFrame extends JFrame implements ActionListener {
 		if (actionEvent.getSource() == okayRecommendation) {
 			String zalecenia = recommendationForPatient.getText();
 			int ID_Leku = listOfMedicine.getSelectedIndex() + 1;
-			doctor.acceptObservationsGUI(zalecenia, ID_Leku);
-			JOptionPane.showMessageDialog(null, "Zalecenia zostały zapisane pomyślnie. Do zobaczenia!");
-			System.exit(0);
+			int orly = 0;
+			if (ID_Leku == ID_Alergii) {
+				UIManager.put("OptionPane.yesButtonText", "Tak");
+				UIManager.put("OptionPane.noButtonText", "Nie");
+				UIManager.put("OptionPane.cancelButtonText", "Anuluj");
+				orly = JOptionPane.showConfirmDialog(null, "Czy na pewno chcesz przepisać pacjentowi lek, na który jest uczulony?");
+			}
+			if (orly == 0) {
+				doctor.acceptObservationsGUI(zalecenia, ID_Leku);
+				JOptionPane.showMessageDialog(null, "Zalecenia zostały zapisane pomyślnie. Do zobaczenia!");
+				System.exit(0);
+			}
 
 		}
-
 
 	}
 

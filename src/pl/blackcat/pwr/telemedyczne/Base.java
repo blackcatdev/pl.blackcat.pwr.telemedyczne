@@ -104,6 +104,17 @@ class Base {
 		return -1;
 	}
 
+	float getFloatQuery(String sqlQuery) {
+		try {
+			resultSet = statement.executeQuery(sqlQuery);
+			if (resultSet.next())
+				return resultSet.getFloat(1);
+		} catch (SQLException sqlError) {
+			sqlError.printStackTrace();
+		}
+		return -1;
+	}
+
 	String getStringQuery(String sqlQuery) {
 		try {
 			resultSet = statement.executeQuery(sqlQuery);

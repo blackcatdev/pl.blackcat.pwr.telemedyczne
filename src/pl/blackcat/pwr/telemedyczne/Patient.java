@@ -84,7 +84,7 @@ class Patient extends Human {
 	}
 
 	void saveNewObservationGUI(float temperatureLevel, int painLevel) {
-		healthBase.insertNewObservation(ID_Operacji, temperatureLevel, painLevel, null, 1);
+		healthBase.insertNewObservation(ID_Operacji, temperatureLevel * 10, painLevel, null, 1);
 	}
 
 	//przeniesiono do GUI
@@ -93,6 +93,7 @@ class Patient extends Human {
 
 	}
 
+	//przeniesiono do GUI
 	private void newObservation() {
 		System.out.println("\nWybrana operacja: " + ID_Operacji + "\n");
 

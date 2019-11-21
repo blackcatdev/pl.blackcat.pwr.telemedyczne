@@ -99,7 +99,7 @@ class Doctor extends Human {
 
 	}
 
-	public boolean CheckData(String pesel, String password) {
+	boolean CheckData(String pesel, String password) {
 		this.pesel = pesel;
 		this.password = password;
 
@@ -179,12 +179,13 @@ class Doctor extends Human {
 		patientPesel = healthBase.getStringQuery("SELECT Operacje.ID_Pacjenta FROM Operacje, Obserwacje WHERE Obserwacje.ID_Operacji = Operacje.ID_Operacji AND Obserwacje.ID_Obserwacji = " + ID_Obserwacji);
 	}
 
-	public String getTemperature() {
-		return healthBase.getStringQuery("SELECT Temperatura FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji);
+	String getTemperature() {
+		float temperature = healthBase.getFloatQuery("SELECT Temperatura FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji) / 10;
+		return Float.toString(temperature);
 
 	}
 
-	public String getPainLevel() {
+	String getPainLevel() {
 		return healthBase.getStringQuery("SELECT Siła_bólu FROM Obserwacje WHERE ID_Obserwacji = " + ID_Obserwacji);
 	}
 
